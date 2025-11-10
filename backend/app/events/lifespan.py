@@ -15,13 +15,13 @@ async def init_db():
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("✅데이터베이스 테이블이 성공적으로 생성되었습니다.")
+        logger.info("✅ 데이터베이스 테이블이 성공적으로 생성되었습니다.")
     except Exception as e:
-        logger.error(f"⛔데이터베이스 테이블을 생성하는 중에 오류가 발생했습니다: {e}")
+        logger.error(f"⛔ 데이터베이스 테이블을 생성하는 중에 오류가 발생했습니다: {e}")
 
 async def run_startup_tasks():
     """앱 시작 시 실행될 비동기 작업들"""
-    logger.info("✅시작 작업 실행...")
+    logger.info("✅ 시작 작업 실행...")
 
     try:
         # 1. DB에 NASDAQ100 리스트 초기화
@@ -33,13 +33,13 @@ async def run_startup_tasks():
         # 3. 한투 API 데이터 로더 추가 예정
 
     except Exception as e:
-        logger.error(f"⛔시작 작업 중 오류 발생: {e}")
+        logger.error(f"⛔ 시작 작업 중 오류 발생: {e}")
     
-    logger.info("✅시작 작업이 완료되었습니다.")
+    logger.info("✅ 시작 작업이 완료되었습니다.")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("✅애플리케이션 시작...")
+    logger.info("✅ 애플리케이션 시작...")
 
     await init_db()
     
@@ -48,4 +48,4 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    logger.info("✅애플리케이션 종료...")
+    logger.info("✅ 애플리케이션 종료...")

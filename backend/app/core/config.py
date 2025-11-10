@@ -30,7 +30,7 @@ def load_symbols_from_file(filepath: str = "nasdaq100_symbols.txt") -> list[str]
             symbols = [line.strip() for line in f if line.strip()]
             return symbols
     except FileNotFoundError:
-        print(f"⚠️경고: {filepath} 파일을 찾지 못했습니다. 빈 리스트를 반환했습니다.")
+        print(f"⚠️ 경고: {filepath} 파일을 찾지 못했습니다. 빈 리스트를 반환했습니다.")
         return []
     
 NASDAQ_100_SYMBOLS = load_symbols_from_file()
