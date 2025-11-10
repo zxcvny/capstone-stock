@@ -31,13 +31,13 @@ async def initialize_stock_list():
     """
     logger.info(f"✅ {len(NASDAQ_100_SYMBOLS)}개 심볼의 주식 목록을 초기화합니다...")
     async with AsyncSessionLocal() as db:
-        for symbol in NASDAQ_100_SYMBOLS:
+        for symbol, name_ko in NASDAQ_100_SYMBOLS:
             db_stock = await crud_stock.get_stock_by_symbol(db, symbol)
             if not db_stock:
                 stock_in = stock_schema.StockCreate(
                     symbol=symbol,
                     name_en=symbol,
-                    name_ko=None, # 어차피 나스닥 100 리스트 저장했으니 한국 이름도 같이 저장하면 어떨까
+                    name_ko=name_ko,
                     market_type="overseas",
                     api_source="twelvedata"
                 )
