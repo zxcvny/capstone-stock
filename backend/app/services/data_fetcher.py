@@ -20,7 +20,7 @@ async def initialize_stock_list():
     """
     nasdaq100_symbols.txt → Stock 테이블에 초기화
     """
-    logger.info(f"Initializing stock list with {len(NASDAQ_100_SYMBOLS)} symbols...")
+    logger.info(f"{len(NASDAQ_100_SYMBOLS)}개 심볼의 주식 목록을 초기화합니다...")
     async with AsyncSessionLocal() as db:
         for symbol in NASDAQ_100_SYMBOLS:
             db_stock = await crud_stock.get_stock_by_symbol(db, symbol)
@@ -33,7 +33,7 @@ async def initialize_stock_list():
                 )
                 await crud_stock.create_stock(db, stock_in)
 
-    logger.info("Stock list initialization complete.")
+    logger.info("NASDAQ100 목록 초기화가 완료되었습니다.")
 
 async def fetch_twelvedata_closing_price(symbol: str, api_key: str) -> Optional[float]:
     """Twelvedata API: 해외 주식 종가 가져오기 (Quote)"""
@@ -52,22 +52,22 @@ async def fetch_twelvedata_closing_price(symbol: str, api_key: str) -> Optional[
                 # 당일 장이 마감 안됐으면 전일 종가 사용
                 return float(data["previous_close"])
             else:
-                logger.warning(f"No closing price found for {symbol} in API response: {data}")
+                logger.warning(f"API 응답에서 {symbol}에 대한 종가를 찾을 수 없습니다: {data}")
                 return None
     except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP error fetching {symbol}: {e}")
+        logger.error(f"{symbol}을(를) 가져오는 중에 HTTP 오류가 발생했습니다: {e}")
     except Exception as e:
-        logger.error(f"Error fetching {symbol}: {e}")
+        logger.error(f"{symbol}을(를) 가져오는 중에 오류가 발생했습니다: {e}")
     return None
 
 async def update_stock_prices_from_twelvedata():
     """
     twlevedata API 사용: 해외 주식 종가 업데이트
     """
-    logger.info("Strating stock price update from Twelvedata...")
+    logger.info("Twelvedata에서 종가 업데이트를 시작합니다...")
     api_key = settings.TWELVEDATA_API_KEY
     if not api_key:
-        logger.error("Twlevedata API KEY is not set. Skipping update.")
+        logger.error("Twlevedata API 키가 설정되지 않았습니다. 업데이트를 건너뜁니다.")
         return
     
     today = date.today()
@@ -80,7 +80,7 @@ async def update_stock_prices_from_twelvedata():
             if latest_data_in_db != today:
                 stocks_to_fetch.append(stock)
             else:
-                logger.info(f"Skipping {stock.symbol}: Today's price already exists.")
+                logger.info(f"{stock.symbol} 건너뛰기: 오늘의 종가가 이미 존재합니다.")
 
     # 세션이 닫힌 후, API 호출 작업 리스트 생성
     tasks = []
@@ -89,7 +89,7 @@ async def update_stock_prices_from_twelvedata():
         tasks.append(fetch_and_save_price(stock, api_key, today))
 
     await asyncio.gather(*tasks)
-    logger.info("Stock price update from Twelvedata complete.")
+    logger.info("Twelvedata의 종가 업데이트가 완료되었습니다.")
 
 async def fetch_and_save_price(stock: stock_model.Stock, api_key: str, fetch_date: date):
     """단일 종목 가격을 비동기로 가져와 저장"""
@@ -104,10 +104,10 @@ async def fetch_and_save_price(stock: stock_model.Stock, api_key: str, fetch_dat
                     close_price=price
                 )
                 await crud_price.create_stock_price(db, price_in)
-                logger.info(f"Successfully saved price for {stock.symbol}: {price}")
+                logger.info(f"{stock.symbol}의 가격이 성공적으로 저장되었습니다: {price}")
             except Exception as e:
-                logger.info(f"Error saving price for {stock.symbol}: {e}")
+                logger.info(f"{stock.symbol}의 가격을 저장하는 중 오류가 발생했습니다: {e}")
     else:
-        logger.warning(f"Failed to fetch price for {stock.symbol}")
+        logger.warning(f"{stock.symbol}의 가격을 가져오지 못했습니다.")
 
 # 한투 API 추가 예정
