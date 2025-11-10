@@ -6,6 +6,13 @@ class StockPriceBase(BaseModel):
     date: date
     close_price: float
 
+    open_price: Optional[float] = None
+    high_price: Optional[float] = None
+    low_price: Optional[float] = None
+    volume: Optional[float] = None
+    change: Optional[float] = None
+    percent_change: Optional[float] = None
+
 class StockPriceCreate(StockPriceBase):
     stock_id: int
 
@@ -17,9 +24,17 @@ class StockPriceResponse(StockPriceBase):
 
 class StockBase(BaseModel):
     symbol: str
-    name: Optional[str] = None
+
+    name_en: Optional[str] = None
+    name_ko: Optional[str] = None
+
     market_type: str
     api_source: str
+
+    exchange: Optional[str] = None
+    currency: Optional[str] = None
+    fifty_two_week_low: Optional[float] = None
+    fifty_two_week_high: Optional[float] = None
 
 class StockCreate(StockBase):
     pass
